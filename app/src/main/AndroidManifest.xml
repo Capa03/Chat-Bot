@@ -10,7 +10,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ChatBot">
         <activity
-            android:name=".MainActivity"
+            android:name=".MessageActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Message.ActivityMessage"
+            android:exported="false" />
+        <activity
+            android:name=".ActivityChat"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

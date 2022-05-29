@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ChatBot</string>
+    <string name="fab_description">New Chat</string>
 </resources>
