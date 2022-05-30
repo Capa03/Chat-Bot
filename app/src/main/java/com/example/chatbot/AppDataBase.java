@@ -7,11 +7,11 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 
-    @Database(entities = {Chat.class}, version = 1)
+    @Database(entities = {Chat.class, Message.class}, version = 1)
     public abstract class AppDataBase extends RoomDatabase {
 
-        public abstract Chat getChatDAO();
-
+        public abstract ChatDAO getChatDAO();
+        public abstract MessageDAO getMessageDAO();
         private static AppDataBase INSTANCE;
 
         public static AppDataBase getInstance(Context context) {

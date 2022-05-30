@@ -1,22 +1,23 @@
 package com.example.chatbot;
 
-import androidx.room.Dao;
+
 import androidx.room.Entity;
-import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity
-@Dao
+
 public class Chat {
 
     @PrimaryKey(autoGenerate = true)
     public long chatId;
     public String chatName;
+    public String profilePicture;
+    public long date;
 
-
-    public Chat(long chatId, String chatName){
-        this.chatId = chatId;
+    public Chat( String chatName, String profilePicture,long date){
         this.chatName =chatName;
+        this.profilePicture = profilePicture;
+        this.date = date;
     }
 
     public long getChatID() {
@@ -27,4 +28,15 @@ public class Chat {
         return chatName;
     }
 
+    public void setChatId(long chatId) {
+        this.chatId = chatId;
+    }
+
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+
+    public long getDate() {
+        return date;
+    }
 }

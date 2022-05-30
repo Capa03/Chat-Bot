@@ -21,6 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:contentDescription="@string/fab_description"
+        android:onClick="onCreateChat"
         android:src="@drawable/ic_baseline_message_24"
         app:layout_constraintBottom_toTopOf="@+id/guideline2"
         app:layout_constraintEnd_toStartOf="@+id/guideline3" />
