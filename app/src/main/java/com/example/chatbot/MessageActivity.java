@@ -11,27 +11,23 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
-import java.util.Date;
 import java.util.List;
 
 public class MessageActivity extends AppCompatActivity {
 
-    private static final String KEY_INDEX = "index";
+    private static final String CHAT_ID = "index";
 
     private AdapterMessge adapterMessge;
-    private static long chatID;
+    private Chat chat;
     private EditText personMessageSend;
-    private TextView personMessageText;
+    private RecyclerView messageRecyclerView;
 
     public static void startActivity(Context context, long chatId) {
         Intent intent = new Intent(context, MessageActivity.class);
-        intent.putExtra(KEY_INDEX, chatId);
+        intent.putExtra(CHAT_ID, chatId);
         context.startActivity(intent);
-        chatID = chatId;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -40,44 +36,57 @@ public class MessageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
 
-        Log.i("MessageChat","ChatId: " + chatID);
+        long chatId;
+        try {
+            chatId = getIntent().getExtras().getLong(CHAT_ID);
+        } catch (Exception e) {
+            finish();
+            return;
+        }
+
+        Log.i("MessageChat","ChatId: " + chatId);
+
+        this.chat = AppDataBase.getInstance(this).getChatDAO().getChatById(chatId);
 
         AppDataBase db = AppDataBase.getInstance(this);
         MessageDAO dao = db.getMessageDAO();
-        this.adapterMessge = new AdapterMessge();
+        List<Message> messages = dao.getMessageByChat(this.chat.getChatID());
+        this.adapterMessge = new AdapterMessge(messages);
 
-        RecyclerView messageRecyclerView = findViewById(R.id.RecyclerViewMessage);
+        this.messageRecyclerView = findViewById(R.id.RecyclerViewMessage);
         RecyclerView.LayoutManager layoutManagerMessage = new LinearLayoutManager(this);
         messageRecyclerView.setAdapter(adapterMessge);
         messageRecyclerView.setLayoutManager(layoutManagerMessage);
-
-        if (getIntent().getExtras() != null) {
-            long id = getIntent().getExtras().getLong(KEY_INDEX, -1);
-            if (id == -1) finish();
-            this.chatID = id;
-
-        } else {
-            finish();
+        if(!messages.isEmpty()) {
+            messageRecyclerView.smoothScrollToPosition(this.adapterMessge.getItemCount() - 1);
         }
-
         cacheViews();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        this.adapterMessge.updateListMessage(AppDataBase.getInstance(this).getMessageDAO().getMessageByChat(chatID));
+        this.adapterMessge.updateListMessage(AppDataBase.getInstance(this).getMessageDAO().getMessageByChat(this.chat.getChatID()));
     }
 
     public void onSendMessage(View view) {
-
-        Date now = new Date();
-        Long longTime = now.getTime()/1000;
-
         String messagePerson = this.personMessageSend.getText().toString();
-        Message message = new Message(this.chatID,messagePerson,longTime,Message.MESSAGE_SEND_BY_PERSON);
-        AppDataBase.getInstance(this).getMessageDAO().insert(message);
-        this.adapterMessge.updateListMessage(AppDataBase.getInstance(this).getMessageDAO().getMessageByChat(chatID));
+        if(!messagePerson.isEmpty()){
+            Message message = new Message(this.chat.getChatID(),messagePerson,System.currentTimeMillis(),Message.MESSAGE_SEND_BY_PERSON);
+            AppDataBase.getInstance(this).getMessageDAO().insert(message);
+
+            String messageBot = this.personMessageSend.getText().toString();
+            Message messageFromBot = new Message(this.chat.getChatID(),messageBot,System.currentTimeMillis(),Message.MESSAGE_SEND_BY_BOT);
+            AppDataBase.getInstance(this).getMessageDAO().insert(messageFromBot);
+
+            this.personMessageSend.setText("");
+            this.adapterMessge.updateListMessage(AppDataBase.getInstance(this).getMessageDAO().getMessageByChat(this.chat.getChatID()));
+            this.messageRecyclerView.smoothScrollToPosition(this.adapterMessge.getItemCount()-1);
+
+            this.chat.setLastMessageDate(messageFromBot.getDate());
+            AppDataBase.getInstance(this).getChatDAO().update(this.chat);
+        }
+
     }
 
     private void cacheViews(){

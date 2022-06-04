@@ -29,8 +29,6 @@ public class CreateNewChat extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_new_chat);
         cacheViews();
-
-
     }
 
     private Random random = new Random();
@@ -44,10 +42,7 @@ public class CreateNewChat extends AppCompatActivity {
             return;
         }
 
-        Date now = new Date();
-        Long longTime = now.getTime()/1000;
-
-        Chat chat = new Chat(chatName,profilePictures[random.nextInt(profilePictures.length)],longTime);
+        Chat chat = new Chat(chatName,profilePictures[random.nextInt(profilePictures.length)],System.currentTimeMillis(), System.currentTimeMillis());
 
         AppDataBase.getInstance(this).getChatDAO().insert(chat);
         finish();

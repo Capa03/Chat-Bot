@@ -13,11 +13,13 @@ public class Chat {
     public String chatName;
     public String profilePicture;
     public long date;
+    public long lastMessageDate;
 
-    public Chat( String chatName, String profilePicture,long date){
+    public Chat(String chatName, String profilePicture, long date, long lastMessageDate){
         this.chatName =chatName;
         this.profilePicture = profilePicture;
         this.date = date;
+        this.lastMessageDate = lastMessageDate;
     }
 
     public long getChatID() {
@@ -38,5 +40,9 @@ public class Chat {
 
     public long getDate() {
         return date;
+    }
+
+    public void setLastMessageDate(long lastMessageDate) {
+        this.lastMessageDate = lastMessageDate;
     }
 }

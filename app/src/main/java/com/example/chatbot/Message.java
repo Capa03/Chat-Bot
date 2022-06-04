@@ -10,6 +10,7 @@ public class Message {
 
     public static final int MESSAGE_SEND_BY_PERSON = 0;
     public static final int MESSAGE_SEND_BY_BOT = 1;
+    public static final int WELCOME_MESSAGE = 2;
 
     @PrimaryKey (autoGenerate = true)
     private long messageID;

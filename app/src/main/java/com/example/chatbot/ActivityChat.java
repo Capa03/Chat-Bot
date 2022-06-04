@@ -1,5 +1,6 @@
 package com.example.chatbot;
 
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -8,10 +9,11 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
+import android.view.View;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ActivityChat extends AppCompatActivity implements AdapterChat.ChatAdapterEventListener {
 
@@ -26,13 +28,12 @@ public class ActivityChat extends AppCompatActivity implements AdapterChat.ChatA
         RecyclerView.LayoutManager layoutManagerChat = new LinearLayoutManager(this);
         chatRecyclerView.setAdapter(adapterChat);
         chatRecyclerView.setLayoutManager(layoutManagerChat);
-
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        this.adapterChat.updateList(AppDataBase.getInstance(this).getChatDAO().getAllChat());
+        this.adapterChat.updateList(AppDataBase.getInstance(this).getChatDAO().getOrderedChat());
     }
 
     @Override
@@ -41,7 +42,7 @@ public class ActivityChat extends AppCompatActivity implements AdapterChat.ChatA
     }
 
     public void onCreateChat(View view) {
-        Intent intent = new Intent(this,CreateNewChat.class);
+        Intent intent = new Intent(this, CreateNewChat.class);
         startActivity(intent);
     }
 
@@ -64,18 +65,19 @@ public class ActivityChat extends AppCompatActivity implements AdapterChat.ChatA
             public void onClick(DialogInterface dialogInterface, int i) {
                 // Código a ser executado quando o utilizador clica em Delete
 
-
                 Chat chat = AppDataBase.getInstance(ActivityChat.this).getChatDAO().getChatById(chatID);
                 AppDataBase.getInstance(ActivityChat.this).getChatDAO().delete(chat);
-                ActivityChat.this.adapterChat.updateList(AppDataBase.getInstance(ActivityChat.this).getChatDAO().getAllChat());
+                ActivityChat.this.adapterChat.updateList(AppDataBase.getInstance(ActivityChat.this).getChatDAO().getOrderedChat());
 
-                Message message = AppDataBase.getInstance(ActivityChat.this).getMessageDAO().getMessageById(chatID);
-                AppDataBase.getInstance(ActivityChat.this).getMessageDAO().delete(message);
-
+                List<Message> allMessageFromChat = AppDataBase.getInstance(ActivityChat.this).getMessageDAO().getAllMessageFromChat(chatID);
+                for (Message message: allMessageFromChat ) {
+                    AppDataBase.getInstance(ActivityChat.this).getMessageDAO().delete(message);
+                }
             }
         });
 
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
 }
