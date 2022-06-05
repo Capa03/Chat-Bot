@@ -76,7 +76,7 @@ public class MessageActivity extends AppCompatActivity {
             Message message = new Message(this.chat.getChatID(),messagePerson,System.currentTimeMillis(),Message.MESSAGE_SEND_BY_PERSON);
             AppDataBase.getInstance(this).getMessageDAO().insert(message);
 
-            String messageBot = BotAnswer.getBotAnswer(messagePerson);
+            String messageBot = BotAnswer.getBotAnswer(messagePerson,chat.chatId, this);
 
             // Fazer comparação da String ou ver se existe na DB
                 Message messageFromBot = new Message(this.chat.getChatID(),messageBot,System.currentTimeMillis(),Message.MESSAGE_SEND_BY_BOT);
