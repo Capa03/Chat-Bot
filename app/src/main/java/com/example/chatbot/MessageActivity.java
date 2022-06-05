@@ -71,14 +71,19 @@ public class MessageActivity extends AppCompatActivity {
 
     public void onSendMessage(View view) {
         String messagePerson = this.personMessageSend.getText().toString();
+
         if(!messagePerson.isEmpty()){
             Message message = new Message(this.chat.getChatID(),messagePerson,System.currentTimeMillis(),Message.MESSAGE_SEND_BY_PERSON);
             AppDataBase.getInstance(this).getMessageDAO().insert(message);
 
-            String messageBot = this.personMessageSend.getText().toString();
-            Message messageFromBot = new Message(this.chat.getChatID(),messageBot,System.currentTimeMillis(),Message.MESSAGE_SEND_BY_BOT);
-            AppDataBase.getInstance(this).getMessageDAO().insert(messageFromBot);
+            String messageBot = BotAnswer.getBotAnswer(messagePerson);
 
+            // Fazer comparação da String ou ver se existe na DB
+                Message messageFromBot = new Message(this.chat.getChatID(),messageBot,System.currentTimeMillis(),Message.MESSAGE_SEND_BY_BOT);
+                AppDataBase.getInstance(this).getMessageDAO().insert(messageFromBot);
+
+
+            //Reset da EditText da message
             this.personMessageSend.setText("");
             this.adapterMessge.updateListMessage(AppDataBase.getInstance(this).getMessageDAO().getMessageByChat(this.chat.getChatID()));
             this.messageRecyclerView.smoothScrollToPosition(this.adapterMessge.getItemCount()-1);
