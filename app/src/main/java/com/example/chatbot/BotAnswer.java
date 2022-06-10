@@ -29,7 +29,7 @@ public class BotAnswer extends AppCompatActivity {
                for (Message messages: allMessageFromChat ) {
                    AppDataBase.getInstance(context).getMessageDAO().delete(messages);
                }
-               return null;
+               return "I deleted all Chat";
            }
        }
 
