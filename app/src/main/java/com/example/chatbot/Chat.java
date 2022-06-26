@@ -11,13 +11,13 @@ public class Chat {
     @PrimaryKey(autoGenerate = true)
     public long chatId;
     public String chatName;
-    public String profilePicture;
+    public String profilePictureId;
     public long date;
     public long lastMessageDate;
 
-    public Chat(String chatName, String profilePicture, long date, long lastMessageDate){
+    public Chat(String chatName, String profilePictureId, long date, long lastMessageDate){
         this.chatName =chatName;
-        this.profilePicture = profilePicture;
+        this.profilePictureId = profilePictureId;
         this.date = date;
         this.lastMessageDate = lastMessageDate;
     }
@@ -34,8 +34,8 @@ public class Chat {
         this.chatId = chatId;
     }
 
-    public String getProfilePicture() {
-        return profilePicture;
+    public String getProfilePictureId() {
+        return profilePictureId;
     }
 
     public long getDate() {

@@ -2,7 +2,7 @@ package com.example.chatbot;
 
 import android.content.Context;
 
-import android.util.Log;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 public class AdapterChat extends RecyclerView.Adapter<AdapterChat.ChatViewHolder> {
 
@@ -47,6 +46,7 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.ChatViewHolder
         Message lastMessage = AppDataBase.getInstance(holder.context).getMessageDAO().getLastMessageFromChat(chatPosition.getChatID());
 
         holder.setChatNameTextView(chatPosition.getChatName());
+
         if (lastMessage != null) {
             holder.setDate(lastMessage.getDate());
             holder.setLastMessage(lastMessage.getMessage());
@@ -55,7 +55,13 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.ChatViewHolder
             holder.setLastMessage("");
         }
 
-        Glide.with(holder.context).load(chatPosition.getProfilePicture()).into(holder.imageView);
+        //https://stackoverflow.com/questions/17356312/converting-of-uri-to-string
+        if(!chatPosition.getProfilePictureId().isEmpty()){
+            holder.imageView.setImageURI(Uri.parse(chatPosition.getProfilePictureId()));
+        }else{
+            holder.imageView.setImageResource(R.drawable.avatar);
+        }
+
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,7 +100,6 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.ChatViewHolder
         private TextView date;
         private Context context;
 
-
         public ChatViewHolder(@NonNull View itemView, Context context) {
             super(itemView);
             this.chatNameTextView = itemView.findViewById(R.id.textViewChatName);
@@ -112,7 +117,9 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.ChatViewHolder
         public void setLastMessage(String message){
             this.messageTextView.setText(message);
         }
-// 1654111314537
+
+
+        // https://stackoverflow.com/questions/3006150/how-to-check-if-a-date-object-equals-yesterday
         public void setDate(long lastMessageTime) {
             if (lastMessageTime == 0) {
                 this.date.setText("");

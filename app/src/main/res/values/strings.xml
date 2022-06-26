@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">ChatBot</string>
     <string name="fab_description">New Chat</string>
+    <string name="delete_all_messages">Delete All Messages</string>
 </resources>

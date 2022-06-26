@@ -3,7 +3,7 @@
     package="com.example.chatbot">
 
     <uses-permission android:name="android.permission.INTERNET"/>
-
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -13,13 +13,16 @@
         android:theme="@style/Theme.ChatBot">
         <activity
             android:name=".CreateNewChat"
+            android:parentActivityName=".ActivityChat"
             android:exported="false" />
         <activity
             android:name=".MessageActivity"
+            android:parentActivityName=".ActivityChat"
             android:exported="false" />
-        <activity
-            android:name=".Message.ActivityMessage"
-            android:exported="false" />
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value=".ActivityChat" />
+
         <activity
             android:name=".ActivityChat"
             android:exported="true">

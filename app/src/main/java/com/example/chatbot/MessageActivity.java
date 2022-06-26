@@ -5,21 +5,24 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.List;
 
-public class MessageActivity extends AppCompatActivity {
+public class MessageActivity extends AppCompatActivity implements AdapterMessage.MessageAdapterEventListener {
 
     private static final String CHAT_ID = "index";
 
-    private AdapterMessge adapterMessge;
+    private AdapterMessage adapterMessage;
     private Chat chat;
     private EditText personMessageSend;
     private RecyclerView messageRecyclerView;
@@ -51,22 +54,22 @@ public class MessageActivity extends AppCompatActivity {
         AppDataBase db = AppDataBase.getInstance(this);
         MessageDAO dao = db.getMessageDAO();
         List<Message> messages = dao.getMessageByChat(this.chat.getChatID());
-        this.adapterMessge = new AdapterMessge(messages);
+        this.adapterMessage = new AdapterMessage(this);
 
         this.messageRecyclerView = findViewById(R.id.RecyclerViewMessage);
         RecyclerView.LayoutManager layoutManagerMessage = new LinearLayoutManager(this);
-        messageRecyclerView.setAdapter(adapterMessge);
+        messageRecyclerView.setAdapter(adapterMessage);
         messageRecyclerView.setLayoutManager(layoutManagerMessage);
         if(!messages.isEmpty()) {
-            messageRecyclerView.smoothScrollToPosition(this.adapterMessge.getItemCount() - 1);
+            messageRecyclerView.smoothScrollToPosition(messages.size() - 1);
         }
         cacheViews();
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        this.adapterMessge.updateListMessage(AppDataBase.getInstance(this).getMessageDAO().getMessageByChat(this.chat.getChatID()));
+    protected void onStart() {
+        super.onStart();
+        this.adapterMessage.updateListMessage(AppDataBase.getInstance(this).getMessageDAO().getMessageByChat(this.chat.getChatID()));
     }
 
     public void onSendMessage(View view) {
@@ -85,8 +88,8 @@ public class MessageActivity extends AppCompatActivity {
 
             //Reset da EditText da message
             this.personMessageSend.setText("");
-            this.adapterMessge.updateListMessage(AppDataBase.getInstance(this).getMessageDAO().getMessageByChat(this.chat.getChatID()));
-            this.messageRecyclerView.smoothScrollToPosition(this.adapterMessge.getItemCount()-1);
+            this.adapterMessage.updateListMessage(AppDataBase.getInstance(this).getMessageDAO().getMessageByChat(this.chat.getChatID()));
+            this.messageRecyclerView.smoothScrollToPosition(this.adapterMessage.getItemCount()-1);
 
             this.chat.setLastMessageDate(messageFromBot.getDate());
             AppDataBase.getInstance(this).getChatDAO().update(this.chat);
@@ -94,7 +97,34 @@ public class MessageActivity extends AppCompatActivity {
 
     }
 
+
     private void cacheViews(){
         this.personMessageSend = findViewById(R.id.editTextMessageSendByPerson);
+    }
+
+    @Override
+    public void onMessageLongClicked(long messageId) {
+        Context context = this;
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Eliminar mensagem");
+        builder.setMessage("Deseja eliminar esta mensagem?");
+        builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Message message = AppDataBase.getInstance(context).getMessageDAO().getMessageById(messageId);
+                AppDataBase.getInstance(context).getMessageDAO().delete(message);
+                adapterMessage.updateListMessage(AppDataBase.getInstance(context).getMessageDAO().getAllMessageFromChat(chat.chatId));
+                Toast.makeText(context,"Messagem apagada com sucesso", Toast.LENGTH_SHORT).show();
+            }
+        });
+        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                Toast.makeText(context,"Nenhuma Alteração", Toast.LENGTH_SHORT).show();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }

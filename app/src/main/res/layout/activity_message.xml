@@ -37,6 +37,7 @@
             android:ems="10"
             android:inputType="textPersonName"
             android:minHeight="48dp"
+            android:padding="4dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/buttonSendMessage"
             app:layout_constraintStart_toStartOf="parent"

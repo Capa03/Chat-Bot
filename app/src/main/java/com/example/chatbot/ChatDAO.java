@@ -17,9 +17,11 @@ public interface ChatDAO {
     @Query("SELECT * FROM Chat WHERE chatId = :chatId")
     Chat getChatById(long chatId);
 
-   @Query("SELECT * FROM Chat ORDER BY lastMessageDate DESC")
+    @Query("SELECT * FROM Chat ORDER BY lastMessageDate DESC")
     List<Chat> getOrderedChat();
 
+    @Query("SELECT profilePictureId FROM CHAT WHERE chatId =:chatId")
+    String getPictureByChatId(long chatId);
     @Insert
     void insert(Chat chat);
 

@@ -23,6 +23,7 @@ public interface MessageDAO {
     List<Message> getMessageByChat(long chatID);
 
 
+
     @Insert
     void insert(Message message);
 
