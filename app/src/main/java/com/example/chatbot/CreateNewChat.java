@@ -47,7 +47,6 @@ public class CreateNewChat extends AppCompatActivity {
                         // Permissao aceite
                         pickImageFromGallery();
                     }
-
                 }else{
                     // Se o System OS Esta a baixo do Lollipop
                     pickImageFromGallery();
